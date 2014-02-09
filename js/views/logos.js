@@ -1,10 +1,13 @@
 var app = app || {};
 
 app.LogosView = Backbone.View.extend({
-    el: $( '#div1 div.span3-fluid' ),
+    el: $( '#header' ),
 
-    initialize: function(logos_list) {
-        this.collection = logos_list;
+    template: _.template( $('#logos-template').html() ),
+
+    initialize: function(attr) {
+        this.level = attr.level;
+        this.collection = attr.logos;
         this.render();
 
         this.listenTo( this.collection, 'add', this.renderLogo );
@@ -15,15 +18,17 @@ app.LogosView = Backbone.View.extend({
     },
 
     render: function() {
+        this.$el.html( this.template({level: this.level }) );
         this.collection.each(function( item ) {
             this.renderLogo( item );
         }, this );
     },
 
     renderLogo: function( item ) {
-        var logoview = new app.LogoView ({
+        var logoview = new app.LogoView({
             model: item
         });
-        this.$el.append( logoview.render().el );
-    }
+        var $el = this.$('#logos');
+        $el.append( logoview.render().el );
+    },
 });
